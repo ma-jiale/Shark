@@ -75,13 +75,23 @@ void WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVelocity) {
     //计算四个轮子线速度，单位：m/s
     /**
      * @brief 此处四句代码需要结合底盘的三个速度，计算处四个轮子的位置对应的线速度。
+		 * 
+		 * 在此分四步进行麦克纳姆轮底盘的逆运动学求解：
+		 * ①将底盘的运动分解为三个独立变量来描述；
+     * ②根据第一步的结果，计算出每个轮子轴心位置的速度；
+     * ③根据第二步的结果，计算出每个轮子与地面接触的辊子的速度；
+     * ④根据第三部的结果，计算出轮子的真实转速。
+	   * 
      * @param fbVelocity,lrVelocity,rtVelocity
      * @return CMFLSpeed CMFRSpeed CMBLSpeed CMBRSpeed
      */
-    CMFLSpeed = 0;
-    CMFRSpeed = 0;
-    CMBLSpeed = 0;
-    CMBRSpeed = 0;
+	  float lrDistance = 0.5; //轮子轴心距离底盘几何中心左右方向距离，需改为实际距离
+		float fbDistance = 0.5; //轮子轴心距离底盘几何中心前后方向距离，需改为实际距离
+	
+    CMFLSpeed = fbVelocity + lrVelocity - rtVelocity * (lrDistance + fbDistance); //左前轮线速度
+    CMFRSpeed = fbVelocity - lrVelocity + rtVelocity * (lrDistance + fbDistance); //右前轮线速度
+    CMBLSpeed = fbVelocity - lrVelocity - rtVelocity * (lrDistance + fbDistance); //左后轮线速度
+    CMBRSpeed = fbVelocity + lrVelocity + rtVelocity * (lrDistance + fbDistance); //右后轮线速度
 
     //计算四个轮子角速度，单位：rad/s
     CMFLSpeed = CMFLSpeed /(WHEEL_DIAMETER/2.0f);
